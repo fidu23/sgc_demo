@@ -1,1 +1,2 @@
-from .vistaCliente import *
+from .cliente import *
+from .parametros import *
