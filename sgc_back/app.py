@@ -7,7 +7,7 @@ from modelos import db,triggers
 from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"]="oracle://SGC_DEMO:sgc_dev_2023@localhost:1521/xe"
+app.config["SQLALCHEMY_DATABASE_URI"]="oracle://SGC_DEMO:sgc_dev_2023@localhost:1522/xe"
 app_context=app.app_context()
 app_context.push()
 

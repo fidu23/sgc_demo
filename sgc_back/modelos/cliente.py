@@ -23,4 +23,16 @@ class ClienteSchema(SQLAlchemyAutoSchema):
 
     clnte_id=fields.String()
     clnte_tpidentif=fields.Nested(TipoDocumentoSchema)
+
+trigger_cliente=db.DDL(
+    f'''
+        CREATE OR REPLACE TRIGGER cliente_trigger
+        BEFORE INSERT ON cl_tcliente
+        FOR EACH ROW
+        BEGIN
+        SELECT cl_scliente.NEXTVAL INTO :new.clnte_id FROM dual;
+        END;
+    '''
+)
+
     
