@@ -13,6 +13,8 @@ ge_sciudad=db.Sequence('ge_sciudad')
 ge_sactividad_economica=db.Sequence('ge_sactividad_economica')
 #CREATE SEQUENCE ge_scategoria_acecn START WITH 1 INCREMENT BY 1;
 ge_scategoria_acecn=db.Sequence('ge_scategoria_acecn')
+#CREATE SEQUENCE ge_sdivision_ctecn START WITH 1 INCREMENT BY 1;
+ge_sdivision_ctecn=db.Sequence('ge_sdivision_ctecn')
 class TipoPersona(db.Model):
     __tablename__="ge_ttipopersona"
     tper_tipo = db.Column(db.String(3), primary_key=True)
@@ -52,16 +54,55 @@ class Ciudad(db.Model):
     ciud_codigo_dane=db.Column(db.String(10))
     ciud_departamento=db.Column(db.Integer(),db.ForeignKey("ge_tdepartamento.depto_id"))
 
+
 class ActividadEconomica(db.Model):
     __tablename__="ge_tactividad_economica"
     acecn_id=db.Column(db.Integer(),ge_sactividad_economica,primary_key=True)
-    acecn_codigo_ciu=db.Column(db.String(20))
-    __table_args__ = (db.UniqueConstraint('acecn_codigo_ciu', name='uq_acecn_codigo_ciu'),)
+    acecn_codigo_ciu=db.Column(db.String(20),nullable=False)
+    acecn_nombre=db.Column(db.String(52),nullable=False)
+    acecn_categoria_id=db.Column(db.Integer(),db.ForeignKey("ge_tcategoria_acecn.ctecn_id"),nullable=False)
+    ctecn_categoria=db.relationship("CategoriaAEconomica",backref="ge_tactividad_economica")
+    
 
-class CategoriaActividadEconomica(db.Model):
+class CategoriaAEconomica(db.Model):
     __tablename__="ge_tcategoria_acecn"
-    ctecn_id=db.Column(db.Integer(),primary_key=True)
+    ctecn_id=db.Column(db.Integer(),ge_scategoria_acecn,primary_key=True)
+    ctecn_codigo_ciu=db.Column(db.String(20),nullable=False)
     ctecn_nombre=db.Column(db.String(52),nullable=False)
+    ctecn_division_id=db.Column(db.Integer(),db.ForeignKey("ge_tdivision_ctecn.dvecn_id"),nullable=False)
+    ctecn_division=db.relationship("DivisionCEconomica",backref="ge_tcategoria_acecn")
+
+class DivisionCEconomica(db.Model):
+    __tablename__="ge_tdivision_ctecn"
+    dvecn_id=db.Column(db.Integer(),ge_sdivision_ctecn,primary_key=True)
+    dvecn_codigo_ciu=db.Column(db.String(20),nullable=False)
+    dvecn_nombre=db.Column(db.String(52),nullable=False)
+
+
+class DivisionCEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=DivisionCEconomica
+        load_instance=True
+
+    dvecn_id=fields.String()
+
+class CategoriaAEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=CategoriaAEconomica
+        load_instance=True
+
+    ctecn_id=fields.String()
+    ctecn_division=fields.Nested(DivisionCEconomicaSchema)
+
+class ActividadEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=ActividadEconomica
+        load_instance=True
+    acecn_id=fields.String()
+    ctecn_categoria=fields.Nested(CategoriaAEconomicaSchema)
+
+
+
 
 class TipoPersonaSchema(SQLAlchemyAutoSchema):
     class Meta:

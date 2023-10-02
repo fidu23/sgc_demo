@@ -1,9 +1,13 @@
 from flask import request,jsonify
 from flask_restful import Resource
-from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema
+from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema,ActividadEconomica,ActividadEconomicaSchema,\
+    CategoriaAEconomica,CategoriaAEconomicaSchema,DivisionCEconomica,DivisionCEconomicaSchema
 
 tipo_persona_schema=TipoPersonaSchema()
 tipo_documento_schema=TipoDocumentoSchema()
+tipo_actividad_schema=ActividadEconomicaSchema()
+tipo_categoria_economica_schema=CategoriaAEconomicaSchema()
+tipo_division_economica_schema=DivisionCEconomicaSchema()
 
 class VistaTiposPersonas(Resource):
     def get(self):
@@ -64,4 +68,18 @@ class VistaTiposDocumentos(Resource):
 class VistaTipoDocumento(Resource):
     def get(self, tdoc_documento):        
         return tipo_documento_schema.dump(TipoDocumento.get_or_404(tdoc_documento))
-        
+
+class VistaActividadEconomica(Resource):
+    def get(self):
+        actividades_economicas=ActividadEconomica.query.all()
+        return tipo_actividad_schema.dump(actividades_economicas, many=True)     
+
+class VistaCategoriaEconomica(Resource):
+    def get(self):
+        categorias_economicas=CategoriaAEconomica.query.all()
+        return tipo_categoria_economica_schema.dump(categorias_economicas, many=True)
+
+class VistaDivisionEconomica(Resource):
+    def get(self):
+        divisiones_economicas=DivisionCEconomica.query.all()
+        return tipo_division_economica_schema.dump(divisiones_economicas, many=True)
