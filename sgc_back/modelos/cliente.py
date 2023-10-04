@@ -26,4 +26,5 @@ class ClienteSchema(SQLAlchemyAutoSchema):
     clnte_id=fields.String()
     clnte_tpidentif=fields.Nested(TipoDocumentoSchema)
     clnte_act_econo=fields.Nested(ActividadEconomicaSchema)
+
     

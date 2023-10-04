@@ -6,9 +6,10 @@ from vistas import VistaCliente,VistaClientes,VistaTiposPersonas,VistaTipoPerson
 
 from modelos import db,triggers
 from flask_migrate import Migrate
+from enviroment import user,password,port,host,sid
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"]="oracle://SGC_DEMO:sgc_dev_2023@localhost:1521/xe"
+app.config["SQLALCHEMY_DATABASE_URI"]="oracle://{0}:{1}@{2}:{3}/{4}".format(user,password,host,port,sid)
 app_context=app.app_context()
 app_context.push()
 

@@ -1,10 +1,7 @@
 from flask import request,jsonify
 from flask_restful import Resource
-from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema,\
-                    ActividadEconomica,ActividadEconomicaSchema,CategoriaActividadEconomica,\
-                    CategoriaActividadEconomicaSchema,DivisionEconomica,DivisionEconomicaSchema
-                    
-                    
+from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema,ActividadEconomicaSchema,CategoriaActividadEconomicaSchema,DivisionEconomicaSchema,\
+                        DivisionEconomica,CategoriaActividadEconomica,ActividadEconomica
 
 tipo_persona_schema=TipoPersonaSchema()
 tipo_documento_schema=TipoDocumentoSchema()
@@ -46,12 +43,15 @@ class VistaTiposDocumentos(Resource):
         return tipo_documento_schema.dump(tipos_documento, many=True)
     
     def post(self):
+        
         tdoc_documento_val = db.session.query(TipoDocumento).filter(TipoDocumento.tdoc_documento == request.json['tdoc_documento']).first()
+        
         
         if tdoc_documento_val:
             response = jsonify({"error": "Ya existe un tipo de documento con este código"})
             response.status_code = 409
             return response
+
         tper_val= db.session.query(TipoPersona).filter(TipoPersona.tper_tipo == request.json['tdoc_tipopersona']).first()
         if tper_val is None:
             response = jsonify({"error": "Tipo de persona invalido"})
@@ -60,7 +60,7 @@ class VistaTiposDocumentos(Resource):
         nuevo_tipo_documento = TipoDocumento(
             tdoc_documento=request.json['tdoc_documento'],
             tdoc_descripcion=request.json['tdoc_descripcion'],
-            tdoc_tipopersona_id=request.json['tdoc_tipopersona']
+            tdoc_tipopersona_id=request.json['tdoc_tipopersona']            
         )
         db.session.add(nuevo_tipo_documento)
         db.session.commit()

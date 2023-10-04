@@ -49,6 +49,7 @@ class Ciudad(db.Model):
     ciud_codigo_dane=db.Column(db.String(10))
     ciud_departamento=db.Column(db.Integer(),db.ForeignKey("ge_tdepartamento.depto_id"))
 
+
 class ActividadEconomica(db.Model):
     __tablename__="ge_tactividad_economica"    
     acecn_codigo_ciu=db.Column(db.String(20),primary_key=True)    

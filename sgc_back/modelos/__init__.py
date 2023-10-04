@@ -8,6 +8,5 @@ from .cliente import *
 triggers=[
     pais_trigger,
     ciudad_trigger,
-    departamento_trigger,
-    
+    departamento_trigger
 ]
