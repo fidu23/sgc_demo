@@ -1,9 +1,16 @@
 from flask import request,jsonify
 from flask_restful import Resource
-from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema
+from modelos import db,TipoPersona,TipoDocumento,TipoDocumentoSchema,TipoPersonaSchema,\
+                    ActividadEconomica,ActividadEconomicaSchema,CategoriaActividadEconomica,\
+                    CategoriaActividadEconomicaSchema,DivisionEconomica,DivisionEconomicaSchema
+                    
+                    
 
 tipo_persona_schema=TipoPersonaSchema()
 tipo_documento_schema=TipoDocumentoSchema()
+tipo_actividad_schema=ActividadEconomicaSchema()
+tipo_categoria_schema=CategoriaActividadEconomicaSchema()
+tipo_divion_schema=DivisionEconomicaSchema()
 
 class VistaTiposPersonas(Resource):
     def get(self):
@@ -40,6 +47,7 @@ class VistaTiposDocumentos(Resource):
     
     def post(self):
         tdoc_documento_val = db.session.query(TipoDocumento).filter(TipoDocumento.tdoc_documento == request.json['tdoc_documento']).first()
+        
         if tdoc_documento_val:
             response = jsonify({"error": "Ya existe un tipo de documento con este código"})
             response.status_code = 409
@@ -52,7 +60,7 @@ class VistaTiposDocumentos(Resource):
         nuevo_tipo_documento = TipoDocumento(
             tdoc_documento=request.json['tdoc_documento'],
             tdoc_descripcion=request.json['tdoc_descripcion'],
-            tdoc_tipopersona=request.json['tdoc_tipopersona']
+            tdoc_tipopersona_id=request.json['tdoc_tipopersona']
         )
         db.session.add(nuevo_tipo_documento)
         db.session.commit()
@@ -62,3 +70,17 @@ class VistaTipoDocumento(Resource):
     def get(self, tdoc_documento):        
         return tipo_documento_schema.dump(TipoDocumento.get_or_404(tdoc_documento))
         
+class VistaActividadEconomica(Resource):
+    def get(self):
+        actividades=ActividadEconomica.query.all()
+        return tipo_actividad_schema.dump(actividades, many=True)
+    
+class VistaCategoriaEconomica(Resource):
+    def get(self):
+        categorias=CategoriaActividadEconomica.query.all()
+        return tipo_categoria_schema.dump(categorias, many=True)
+    
+class VistaDivisionEconomica(Resource):
+    def get(self):
+        divisiones=DivisionEconomica.query.all()
+        return tipo_divion_schema.dump(divisiones, many=True)

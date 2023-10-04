@@ -9,10 +9,7 @@ ge_spais=db.Sequence('ge_spais')
 ge_sdepartamento=db.Sequence('ge_sdepartamento')
 #CREATE SEQUENCE ge_sciudad START WITH 1 INCREMENT BY 1;
 ge_sciudad=db.Sequence('ge_sciudad')
-#CREATE SEQUENCE ge_sactividad_economica START WITH 1 INCREMENT BY 1;
-ge_sactividad_economica=db.Sequence('ge_sactividad_economica')
-#CREATE SEQUENCE ge_scategoria_acecn START WITH 1 INCREMENT BY 1;
-ge_scategoria_acecn=db.Sequence('ge_scategoria_acecn')
+
 class TipoPersona(db.Model):
     __tablename__="ge_ttipopersona"
     tper_tipo = db.Column(db.String(3), primary_key=True)
@@ -53,15 +50,47 @@ class Ciudad(db.Model):
     ciud_departamento=db.Column(db.Integer(),db.ForeignKey("ge_tdepartamento.depto_id"))
 
 class ActividadEconomica(db.Model):
-    __tablename__="ge_tactividad_economica"
-    acecn_id=db.Column(db.Integer(),ge_sactividad_economica,primary_key=True)
-    acecn_codigo_ciu=db.Column(db.String(20))
-    __table_args__ = (db.UniqueConstraint('acecn_codigo_ciu', name='uq_acecn_codigo_ciu'),)
+    __tablename__="ge_tactividad_economica"    
+    acecn_codigo_ciu=db.Column(db.String(20),primary_key=True)    
+    acecn_nombre=db.Column(db.String(52),nullable=False)
+    acecn_categoria_id=db.Column(db.String(20),db.ForeignKey("ge_tcategoria_acecn.ctecn_codigo_ciu"))
+    
+    
 
 class CategoriaActividadEconomica(db.Model):
-    __tablename__="ge_tcategoria_acecn"
-    ctecn_id=db.Column(db.Integer(),primary_key=True)
+    __tablename__="ge_tcategoria_acecn"    
+    ctecn_codigo_ciu=db.Column(db.String(20),primary_key=True)
     ctecn_nombre=db.Column(db.String(52),nullable=False)
+    ctecn_division_id=db.Column(db.String(20),db.ForeignKey("ge_tdivison_ctecn.dvecn_codio_ciu"))
+    ctecn_division=db.relationship("DivisionEconomica",backref="ge_tcategoria_acecn")
+    actividades=db.relationship('ActividadEconomica',cascade="all,delete,delete-orphan")
+
+class DivisionEconomica(db.Model):
+    __tablename__="ge_tdivison_ctecn"
+    dvecn_codio_ciu = db.Column(db.String(20),primary_key=True)
+    dvecn_nombre=db.Column(db.String(52),nullable=False)
+    
+
+class DivisionEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=DivisionEconomica
+        load_instance=True
+
+
+class ActividadEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=ActividadEconomica
+        load_instance=True
+    
+    
+class CategoriaActividadEconomicaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model=CategoriaActividadEconomica
+        load_instance=True
+
+    ctecn_division=fields.Nested(DivisionEconomicaSchema)
+    actividades=fields.List(fields.Nested(ActividadEconomicaSchema()))
+
 
 class TipoPersonaSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -105,13 +134,4 @@ departamento_trigger=db.DDL(
     END;
     '''
 )
-actividad_trigger=db.DDL(
-    f'''
-    CREATE OR REPLACE TRIGGER actividadeco_trigger
-    BEFORE INSERT ON ge_tactividad_economica
-    FOR EACH ROW
-    BEGIN
-    SELECT ge_sactividad_economica.NEXTVAL INTO :new.acecn_id FROM dual;
-    END;
-    '''
-)
+
