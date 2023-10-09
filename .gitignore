@@ -1,6 +1,2 @@
-/sgc_back/venv
-<<<<<<< HEAD
-/sgc_back/migrations
-=======
-/sgc_back/migrations
->>>>>>> 982e5d1f5f6fe819501a03cdbd6f6e6aafa78214
+/venv
+/migrations
