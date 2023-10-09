@@ -1,5 +1,0 @@
-user="SGC_DEMO"
-password="sgc_dev_2023"
-host="localhost"
-port="1521"
-sid="xe"
