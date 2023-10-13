@@ -33,8 +33,9 @@ class VistaClientes(Resource):
         nuevo_cliente=Cliente(
             clnte_tpidentif_id=tdoc,
             clnte_nroident=request.json['clnte_nroident'],
-            clnte_estado=request.json['clnte_estado'],
+            clnte_estado=request.json['clnte_estado'] if 'clnte_estado' in request.json else "ACT",
             clnte_act_econo_id=request.json['clnte_act_econo'] if 'clnte_act_econo' in request.json else ""
+            
         )
         db.session.add(nuevo_cliente)
         db.session.commit()
